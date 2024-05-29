@@ -131,11 +131,13 @@ def get_current_key():
         'x': ('23:00', '00:00')
     }
 
-    india_tz = pytz.timezone('Asia/Kolkata')
-    current_time = india_tz.localize(datetime.datetime.now()).time()
+    ist_tz = pytz.timezone('Asia/Kolkata')
+    current_time = datetime.datetime.now(tz=ist_tz)
 
     for key, time_range in time_slots.items():
         start_time, end_time = [datetime.datetime.strptime(t, '%H:%M').time() for t in time_range]
+        start_time = ist_tz.localize(datetime.datetime.combine(current_time.date(), start_time))
+        end_time = ist_tz.localize(datetime.datetime.combine(current_time.date(), end_time))
         if start_time <= current_time < end_time:
             return key
      
