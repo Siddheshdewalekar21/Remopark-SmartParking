@@ -99,7 +99,7 @@ def confirmation(request):
         times_list.append(time_slots[i])
     request.session['slots_list'] = times_list
     bill = (price * len(times_list))
-    razorpayBill=bill
+    razorpayBill=bill*100
     today = date.today()
     return render(request, 'confirmation.html', {'name': spotname,'spots':times_list,'center':center,'bill':bill,'date':today,'razorpayBill':razorpayBill})
 
@@ -172,7 +172,7 @@ def success(request):
     booked_spot.save()
     spot.save()
     subject = 'Your parking spot is booked!'
-    message = f'Dear {user.username},\n\nYour parking spot at {spot.parking_center.name} has been booked successfully.\n\nSpot Details:\nSpot Name: {spot.name}\Time : {booked_times}\n\nThank you for using our service!'
+    message = f'Dear {user.username},\n\nYour parking spot at {spot.parking_center.name} has been booked successfully.\n\nSpot Details:\nSpot Name: {spot.name}\nTime : {booked_times}\n\nThank you for using our service!'
     from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = [user.email]
     send_mail(subject, message, from_email, recipient_list, fail_silently=False)
@@ -188,7 +188,7 @@ def home(request):
 def destination(request):
     return render(request,'destination.html')
 
-def delete_past_bookings():
+def delete_past_bookings(request):
     current_key = get_current_key()
     if current_key:
         BookedSpot.objects.filter(spot_code__lt=current_key).delete()
