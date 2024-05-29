@@ -270,7 +270,8 @@ def camera():
                 imgCrop = imgDilate[y:y + height, x:x + width] 
                 count = cv2.countNonZero(imgCrop) 
                 if count < 2500:    
-                    green_counters.append(counter) 
+                    green_counters.append(counter)
+    print(green_counters)
     checking(green_counters) 
  
         
