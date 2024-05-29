@@ -98,8 +98,8 @@ def confirmation(request):
     for i in selected_slots:
         times_list.append(time_slots[i])
     request.session['slots_list'] = times_list
-    bill = (price * len(times_list))*100
-    razorpayBill=bill *100
+    bill = (price * len(times_list))
+    razorpayBill=bill
     today = date.today()
     return render(request, 'confirmation.html', {'name': spotname,'spots':times_list,'center':center,'bill':bill,'date':today,'razorpayBill':razorpayBill})
 
@@ -176,7 +176,6 @@ def success(request):
     from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = [user.email]
     send_mail(subject, message, from_email, recipient_list, fail_silently=False)
-    request.session.clear()
     return render(request,'success.html')
 
 @login_required(login_url='login')
