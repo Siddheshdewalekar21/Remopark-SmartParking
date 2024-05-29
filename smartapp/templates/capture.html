@@ -104,19 +104,14 @@
             });
         }
 
-        function startCapturing() {
-            navigator.mediaDevices.enumerateDevices()
-                .then(devices => {
-                    const rearCameraId = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('rear'))?.deviceId;
+        function startCapturing(deviceId) {
+            const constraints = {
+                video: {
+                    deviceId: deviceId ? { exact: deviceId } : undefined
+                }
+            };
 
-                    const constraints = {
-                        video: {
-                            deviceId: rearCameraId ? { exact: rearCameraId } : undefined
-                        }
-                    };
-
-                    return navigator.mediaDevices.getUserMedia(constraints);
-                })
+            navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
                     const video = document.getElementById('video');
                     video.srcObject = stream;
