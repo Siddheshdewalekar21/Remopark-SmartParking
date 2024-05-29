@@ -1,0 +1,35 @@
+{% extends 'base.html' %} 
+{% block content %}
+    <style>
+        .container{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-top:50px;
+            padding-bottom: 50px;
+            gap:10px;
+        }
+        .booking-details{
+            width: 300px;
+            border: 2px dotted rgb(68, 66, 66);
+            padding: 10px 10px;
+        }
+        .icon{
+            margin-bottom:0px;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+        <div class="icon">
+            <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
+            <dotlottie-player src="https://lottie.host/5eb1c15a-5ef9-4a96-8076-b28c30244fef/uTPLOp3gbw.json" background="transparent" speed="1" style="width: 250px; height: 250px;" loop autoplay></dotlottie-player>
+        </div>
+        <div style="text-align: center">
+            <h2>Booking Successful</h2>
+            <p>Your parking slot has been successfully booked!</p>
+        </div>
+        <button type="button" class="btn btn-primary mt-5"> <a href="{% url 'home' %}" style="text-decoration:none; color:white">Back to Homepage</a></button>
+    </div>
+    {% endblock %}

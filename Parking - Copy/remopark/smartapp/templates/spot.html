@@ -1,0 +1,124 @@
+{% extends 'base.html' %} 
+{% block content %}
+    <style>
+      .spot {
+        display: block;
+        border: 1px solid #000;
+        margin: 5px;
+        text-align: center;
+        width: 180px;
+        outline: none;
+        cursor: pointer;
+        line-height: 60px;
+        cursor: pointer;
+        background-color: #fff;
+        transition: background-color 0.3s ease;
+      }
+      .spot.selected {
+        background-color: #0069D9;
+        color: #fff;
+        border:2px solid #0069D9;
+      }
+      .spot input {
+        display: none;
+        cursor: pointer;
+      }
+    
+      .container{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        justify-self: center;
+        align-items: center;
+        gap:10px;
+      }
+      .btn{
+        margin-top: 30px;
+      }
+    </style>
+  </head> 
+  <body>
+    <nav class="navbar navbar-dark bg-primary fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">RemoPark</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasDarkNavbar"
+          aria-controls="offcanvasDarkNavbar"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="offcanvas offcanvas-end text-bg-primary"
+          tabindex="-1"
+          id="offcanvasDarkNavbar"
+          aria-labelledby="offcanvasDarkNavbarLabel"
+        >
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">
+              RemoPark
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+              </li>
+              <li class="nav-item dropdown"></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div style="margin-top: 150px"></div>
+
+    <form
+      method="post"
+      id="bookingForm"
+    >
+     
+        {% csrf_token %} 
+        
+        <h1 style="text-align: center; margin-bottom: 30px;">Available Time Slots at {{spot.name}}</h1>
+        <div class="container">
+          {% for slot in form.available_slots %}
+            <div class="spot" data-slot-id="{{ slot.value }}">{{ slot }}</div>
+            {% endfor %}
+          </div>
+      <center><button type="submit" class="btn btn-primary">Book Now</button></center>
+
+    </form>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var spots = document.querySelectorAll(".spot");
+        var bookNowButton = document.getElementById("book-now-button");
+        var bill = document.getElementById("bill");
+        var money = 0;
+        spots.forEach(function (spot) {
+          // Check if the checkbox is initially checked
+          var checkbox = spot.querySelector('input[type="checkbox"]');
+          if (checkbox.checked) {
+            spot.classList.add("selected");
+          }
+
+          spot.addEventListener("click", function () {
+            checkbox.checked = !checkbox.checked;
+            spot.classList.toggle("selected", checkbox.checked);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
+{% endblock %}

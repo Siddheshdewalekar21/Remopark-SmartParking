@@ -1,0 +1,110 @@
+{% extends 'base.html' %} {% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* General Styles */
+        body {
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h2 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #333;
+        }
+
+        /* Spot Button Styles */
+        .spot-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            background-color: #fff;
+            color: #3f51b5;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 2px solid #3f51b5;
+        }
+
+        .spot-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .spot-button:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background-color: rgba(63, 81, 181, 0.3);
+            border-radius: 50%;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
+        }
+
+        .spot-button:hover:before {
+            width: 200%;
+            height: 200%;
+            opacity: 1;
+        }
+
+        .car-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #3f51b5;
+        }
+
+        /* Spot Layout */
+        .spot-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Spots at {{ center.name }}</h2>
+    <div class="spot-layout">
+        {% for spot in empty_spots %}
+        <button class="spot-button" onclick="redirectToSpot('{{ spot.id }}')">
+            <div><i class="icon fas fa-car"></i></div>
+            {{ spot.name }}
+        </button>
+        {% endfor %}
+    </div>
+    <script>
+        function redirectToSpot(spotId) {
+            window.location.href = `/spot/${spotId}/`;
+        }
+    </script>
+</body>
+</html>
+{% endblock %}
