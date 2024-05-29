@@ -18,7 +18,9 @@
             {% endfor %} 
         </p> 
         <a class="btn btn-primary" href='destination?lng={{booked_spot.parking_center.longitude}}&lat={{booked_spot.parking_center.latitude}}'>View Directions</a>
-        <a class="btn btn-success" href="/display_image">Preview</a>
+        {% if booked_spot.parking_center.id == 1 %}
+            <a class="btn btn-success" href="/display_image">Preview</a>
+        {% endif %}
     </div> 
 </div> 
 {% endfor %} 

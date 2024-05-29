@@ -233,8 +233,14 @@ def user_logout(request):
     logout(request)
     return redirect('login') 
 
+from django.shortcuts import render
+
 def contact(request):
-    return render(request,'contact.html',{'thank': 'Thank you for contacting us!'})
+    context = {}
+    if request.method == 'POST':
+        context['thank'] = 'Thank you for contacting us!'
+    return render(request, 'contact.html', context)
+
 def about(request):
     return render(request,'about.html')
 def services(request):

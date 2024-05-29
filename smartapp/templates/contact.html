@@ -1,102 +1,111 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% block content %}
 <style>
-        body {
-            background-color: #f4f4f4;
-        }
+    body {
+        background-color: #f4f4f4;
+    }
 
-        header {
-            color: #0D6EFD;
-            padding: 20px 15px;
-            text-align: center;
-            margin-top: 80px;
-        }
-        section {
-            width: 350px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+    header {
+        color: #0D6EFD;
+        padding: 20px 15px;
+        text-align: center;
+        margin-top: 80px;
+    }
 
-        form {
-            display: flex;
-            flex-direction: column;
-            border-radius:5px;
-        }
+    section {
+        width: 350px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-        label {
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
+    form {
+        display: flex;
+        flex-direction: column;
+        border-radius: 5px;
+    }
 
-        input, textarea {
-            padding: 10px;
-            margin-bottom: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+    label {
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
 
-        button {
-            padding: 10px 20px;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+    input, textarea {
+        padding: 10px;
+        margin-bottom: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
 
-        button:hover {
-            background-color: #2980b9;
-        }
+    button {
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
 
-        footer {
-            background-color: #3498db;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
+    button:hover {
+        background-color: #2980b9;
+    }
 
-        a {
-            color: #fff;
-            text-decoration: none;
-         
-        }
+    footer {
+        background-color: #3498db;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
 
-        a:hover {
-            color: #ecf0f1;
-        }
-        #shadow-host-companion{
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Contact RemoPark</h1>
-    </header>
+    a {
+        color: #fff;
+        text-decoration: none;
+    }
 
-    <section>
-        <form method="POST" action="{% url 'contact' %}">
-            {% csrf_token %}
-            <label for="name">Your Name:</label>
-            <input type="text" id="name" name="name" required>
+    a:hover {
+        color: #ecf0f1;
+    }
 
-            <label for="email">Your Email:</label>
-            <input type="email" id="email" name="email" required>
+    #shadow-host-companion {
+        display: none;
+    }
 
-            <label for="message">Your Message:</label>
-            <textarea id="message" name="message" rows="4" required></textarea>
+    .thank-message {
+        text-align: center;
+        margin-top: 5px;
+        color: green;
+    }
+</style>
 
-            <button type="submit">Send Message</button>
-        </form>
-    </section>
-    <h4 style="text-align: center; margin-top: 5px;">{{thank}}</h4>
+<header>
+    <h1>Contact RemoPark</h1>
+</header>
 
- 
-</body>
-</html>
+<section>
+    <form method="POST" action="{% url 'contact' %}">
+        {% csrf_token %}
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Your Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="message">Your Message:</label>
+        <textarea id="message" name="message" rows="4" required></textarea>
+
+        <button type="submit">Send Message</button>
+    </form>
+</section>
+
+{% if thank %}
+    <div class="thank-message">
+        <h4>{{ thank }}</h4>
+    </div>
+{% endif %}
+
 {% endblock %}
