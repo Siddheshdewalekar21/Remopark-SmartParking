@@ -10,7 +10,7 @@ from .models import ParkingCenter, ParkingSpot,BookedSpot ,CustomUser,CapturedIm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login,logout
-import cv2,pickle,base64,time,numpy as np
+import cv2,pickle,base64,time
 from django.http import JsonResponse
 from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
@@ -102,9 +102,6 @@ def confirmation(request):
     razorpayBill=bill *100
     today = date.today()
     return render(request, 'confirmation.html', {'name': spotname,'spots':times_list,'center':center,'bill':bill,'date':today,'razorpayBill':razorpayBill})
-   
-# def camera(request,center_id):
-#     center = get_object_or_404(ParkingCenter, id=center_id)
 
 def get_current_key():
     time_slots = {
@@ -254,13 +251,13 @@ def profile(request):
 
 width, height = 175, 224
 
-def camera(request): 
+def camera(): 
     img = cv2.imread('media/parking_spot_images/parking.jpg') 
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
     imgBlur = cv2.GaussianBlur(imgGray, (3, 3), 1) 
     imgThreshold = cv2.adaptiveThreshold(imgBlur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 25, 16) 
     imgMedian = cv2.medianBlur(imgThreshold, 5)
-    kernel = np.ones((3, 3), np.uint8) 
+    kernel = [[1 for _ in range(3)] for _ in range(3)]
     imgDilate = cv2.dilate(imgMedian, kernel, iterations=1) 
     with open('CarParkPos1', 'rb') as f:
         posList = pickle.load(f) 
@@ -290,7 +287,7 @@ def upload_image(request):
         image_data = ContentFile(base64.b64decode(imgstr), name="parking.jpg")
         parking_spot_image = CapturedImage(image=image_data)
         parking_spot_image.save()
-        # camera()
+        camera()
 
 
 def display_image(request):
@@ -312,8 +309,7 @@ def checking(spot_names_to_exclude):
         if currentKey not in spot.spot_code:
             booked_spots = BookedSpot.objects.filter(parking_spot=spot, spot_code__contains=prevKey).values_list('user__email', flat=True)
             subject = 'Time Extended Please pay Bill'
-            message = f'Hello your Time is Expired please recharge Immediatly<br><a href="/spot/{spot.id}">Recharge</a>'
+            message = f'Dear {user.username},\\n\\nYour parking spot at {spot.parking_center.name} has been booked successfully.\\n\\nSpot Details:\\nSpot Name: {spot.name}\\Time : {booked_times}\\n\\nThank you for using our service!'
             from_email = settings.DEFAULT_FROM_EMAIL
             recipient_list = booked_spots
             send_mail(subject, message, from_email, recipient_list, fail_silently=False)
-
