@@ -10,6 +10,7 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -21,7 +22,8 @@
         #videoContainer {
             position: relative;
             width: 100%;
-            max-width: 640px;
+            max-width: 100%;
+            padding: 0 20px;
         }
 
         #video {
@@ -44,6 +46,13 @@
             animation: spin 2s linear infinite;
         }
 
+        #cameraSelect {
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 1em;
+            width: 100%;
+        }
+
         @keyframes spin {
             0% { transform: translate(-50%, -50%) rotate(0deg); }
             100% { transform: translate(-50%, -50%) rotate(360deg); }
@@ -51,6 +60,7 @@
     </style>
     <script>
         let intervalId;
+        let currentStream;
 
         function showLoader() {
             document.getElementById('loader').style.display = 'block';
@@ -94,46 +104,70 @@
             });
         }
 
-        function startCapturing() {
-            navigator.mediaDevices.enumerateDevices()
-                .then(devices => {
-                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                    const rearCamera = videoDevices.find(device => /rear/i.test(device.label));
+        function startCapturing(deviceId) {
+            const constraints = {
+                video: {
+                    deviceId: deviceId ? { exact: deviceId } : undefined
+                }
+            };
 
-                    if (rearCamera) {
-                        const constraints = { video: { deviceId: rearCamera.deviceId } };
-                        navigator.mediaDevices.getUserMedia(constraints)
-                            .then(stream => {
-                                const video = document.getElementById('video');
-                                video.srcObject = stream;
-                                video.play();
-                                intervalId = setInterval(captureImage, 15000); // Capture image every 5 minutes (300000 ms)
-                            })
-                            .catch(error => console.error('Error accessing rear camera:', error));
-                    } else {
-                        console.error('No rear camera found');
-                    }
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(stream => {
+                    const video = document.getElementById('video');
+                    video.srcObject = stream;
+                    video.play();
+                    currentStream = stream;
+                    intervalId = setInterval(captureImage, 15000); // Capture image every 15 seconds (15000 ms)
                 })
-                .catch(error => console.error('Error enumerating devices:', error));
+                .catch(error => console.error('Error accessing webcam:', error));
         }
 
         function stopCapturing() {
             clearInterval(intervalId);
-            const video = document.getElementById('video');
-            const stream = video.srcObject;
-            if (stream) {
-                const tracks = stream.getTracks();
-                tracks.forEach(track => track.stop());
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
             }
+            const video = document.getElementById('video');
             video.srcObject = null;
         }
 
-        window.addEventListener('load', startCapturing);
+        function listCameras() {
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    const videoSelect = document.getElementById('cameraSelect');
+                    videoSelect.innerHTML = '';
+                    devices.forEach(device => {
+                        if (device.kind === 'videoinput') {
+                            const option = document.createElement('option');
+                            option.value = device.deviceId;
+                            option.text = device.label || `Camera ${videoSelect.length + 1}`;
+                            videoSelect.appendChild(option);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error listing cameras:', error));
+        }
+
+        function handleCameraChange() {
+            const videoSelect = document.getElementById('cameraSelect');
+            stopCapturing();
+            startCapturing(videoSelect.value);
+        }
+
+        window.addEventListener('load', () => {
+            listCameras();
+            startCapturing();
+
+            const videoSelect = document.getElementById('cameraSelect');
+            videoSelect.addEventListener('change', handleCameraChange);
+        });
+
         window.addEventListener('beforeunload', stopCapturing);
     </script>
 </head>
 <body>
     <div id="videoContainer">
+        <select id="cameraSelect"></select>
         <video id="video" autoplay></video>
         <div id="loader"></div>
     </div>
