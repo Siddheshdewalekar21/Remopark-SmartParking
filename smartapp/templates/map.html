@@ -89,18 +89,18 @@
                         userInfoWindow.open(map, userMarker);
                     });
 
-                    createParkingMarkers();
-                }, function () {
-                    console.error('Error getting user location');
-                    createParkingMarkers(); // Even if geolocation fails, create the parking markers
+                    createParkingMarkers(userLocation);
+                }, function (error) {
+                    console.error('Error getting user location:', error.message);
+                    createParkingMarkers(null); // Even if geolocation fails, create the parking markers
                 });
             } else {
                 console.error('Geolocation is not supported by this browser');
-                createParkingMarkers(); // If geolocation is not supported, create the parking markers
+                createParkingMarkers(null); // If geolocation is not supported, create the parking markers
             }
         }
 
-        function createParkingMarkers() {
+        function createParkingMarkers(userLocation) {
             parking_spots.forEach(function (spot) {
                 var marker = new google.maps.Marker({
                     position: { lat: spot.latitude, lng: spot.longitude },
@@ -122,22 +122,28 @@
                 });
 
                 marker.addListener('click', function () {
-                    if (userMarker) {
-                        var spotLocation = new google.maps.LatLng(spot.latitude, spot.longitude);
-                        var distance = google.maps.geometry.spherical.computeDistanceBetween(userMarker.getPosition(), spotLocation);
-                        distance = (distance / 1000).toFixed(2); // Convert meters to kilometers
-
-                        var distanceElement = document.getElementById('distance-' + spot.id);
-                        if (distanceElement) {
-                            distanceElement.textContent = distance + ' km';
-                        } else {
-                            console.error('Distance element not found: distance-' + spot.id);
-                        }
-                    } else {
-                        console.error('User location not available');
-                    }
-
                     infoWindow.open(map, marker);
+
+                    google.maps.event.addListenerOnce(infoWindow, 'domready', function () {
+                        if (userLocation) {
+                            var spotLocation = new google.maps.LatLng(spot.latitude, spot.longitude);
+                            var distance = google.maps.geometry.spherical.computeDistanceBetween(
+                                new google.maps.LatLng(userLocation.lat, userLocation.lng),
+                                spotLocation
+                            );
+
+                            distance = (distance / 1000).toFixed(2); // Convert meters to kilometers
+
+                            var distanceElement = document.getElementById('distance-' + spot.id);
+                            if (distanceElement) {
+                                distanceElement.textContent = distance + ' km';
+                            } else {
+                                console.error('Distance element not found: distance-' + spot.id);
+                            }
+                        } else {
+                            console.error('User location not available');
+                        }
+                    });
                 });
             });
         }

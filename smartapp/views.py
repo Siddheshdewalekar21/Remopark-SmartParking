@@ -103,43 +103,35 @@ def confirmation(request):
     today = date.today()
     return render(request, 'confirmation.html', {'name': spotname,'spots':times_list,'center':center,'bill':bill,'date':today,'razorpayBill':razorpayBill})
 
+import datetime
+import pytz
+
 def get_current_key():
     time_slots = {
-        'a': ('00:00', '01:00'),
-        'b': ('01:00', '02:00'),
-        'c': ('02:00', '03:00'),
-        'd': ('03:00', '04:00'),
-        'e': ('04:00', '05:00'),
-        'f': ('05:00', '06:00'),
-        'g': ('06:00', '07:00'),
-        'h': ('07:00', '08:00'),
-        'i': ('08:00', '09:00'),
-        'j': ('09:00', '10:00'),
-        'k': ('10:00', '11:00'),
-        'l': ('11:00', '12:00'),
-        'm': ('12:00', '13:00'),
-        'n': ('13:00', '14:00'),
-        'o': ('14:00', '15:00'),
-        'p': ('15:00', '16:00'),
-        'q': ('16:00', '17:00'),
-        'r': ('17:00', '18:00'),
-        's': ('18:00', '19:00'),
-        't': ('19:00', '20:00'),
-        'u': ('20:00', '21:00'),
-        'v': ('21:00', '22:00'),
-        'w': ('22:00', '23:00'),
-        'x': ('23:00', '00:00')
+        'a': ('00:00', '01:00'), 'b': ('01:00', '02:00'), 'c': ('02:00', '03:00'), 'd': ('03:00', '04:00'),
+        'e': ('04:00', '05:00'), 'f': ('05:00', '06:00'), 'g': ('06:00', '07:00'), 'h': ('07:00', '08:00'),
+        'i': ('08:00', '09:00'), 'j': ('09:00', '10:00'), 'k': ('10:00', '11:00'), 'l': ('11:00', '12:00'),
+        'm': ('12:00', '13:00'), 'n': ('13:00', '14:00'), 'o': ('14:00', '15:00'), 'p': ('15:00', '16:00'),
+        'q': ('16:00', '17:00'), 'r': ('17:00', '18:00'), 's': ('18:00', '19:00'), 't': ('19:00', '20:00'),
+        'u': ('20:00', '21:00'), 'v': ('21:00', '22:00'), 'w': ('22:00', '23:00'), 'x': ('23:00', '00:00')
     }
 
     ist_tz = pytz.timezone('Asia/Kolkata')
-    current_time = datetime.datetime.now(tz=ist_tz)
+    current_time = datetime.datetime.now(tz=ist_tz).time()
 
     for key, time_range in time_slots.items():
         start_time, end_time = [datetime.datetime.strptime(t, '%H:%M').time() for t in time_range]
-        start_time = ist_tz.localize(datetime.datetime.combine(current_time.date(), start_time))
-        end_time = ist_tz.localize(datetime.datetime.combine(current_time.date(), end_time))
-        if start_time <= current_time < end_time:
-            return key
+
+        # Handle time slots that span midnight
+        if start_time < end_time:
+            if start_time <= current_time < end_time:
+                return key
+        else:  # time slot spans midnight
+            if start_time <= current_time or current_time < end_time:
+                return key
+
+    return None
+
      
 def map(request):
     parking_centers = ParkingCenter.objects.all().values('id','name', 'price', 'latitude', 'longitude', 'contact')
