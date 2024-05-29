@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Parking Spot Image</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        #videoContainer {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+        }
+
+        #video {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        #loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+    <script>
+        let intervalId;
+
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+        }
+
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        function captureImage() {
+            const video = document.getElementById('video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/jpeg');
+
+            // Show loader and stop capturing process
+            showLoader();
+            stopCapturing();
+
+            // Send the image data to the server
+            fetch('/upload_image/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ image: imageData }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server response:', data);
+                hideLoader();
+                startCapturing(); // Resume capturing after upload is complete
+            })
+            .catch(error => {
+                console.error('Error uploading image:', error);
+                hideLoader();
+                startCapturing(); // Resume capturing even if there's an error
+            });
+        }
+
+        function startCapturing() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    const video = document.getElementById('video');
+                    video.srcObject = stream;
+                    video.play();
+                    intervalId = setInterval(captureImage, 15000); // Capture image every 5 minutes (300000 ms)
+                })
+                .catch(error => console.error('Error accessing webcam:', error));
+        }
+
+        function stopCapturing() {
+            clearInterval(intervalId);
+            const video = document.getElementById('video');
+            const stream = video.srcObject;
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+            video.srcObject = null;
+        }
+
+        window.addEventListener('load', startCapturing);
+        window.addEventListener('beforeunload', stopCapturing);
+    </script>
+</head>
+<body>
+    <div id="videoContainer">
+        <video id="video" autoplay></video>
+        <div id="loader"></div>
+    </div>
+</body>
+</html>
+{% endblock %}
