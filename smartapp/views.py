@@ -10,7 +10,7 @@ from .models import ParkingCenter, ParkingSpot,BookedSpot ,CustomUser,CapturedIm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login,logout
-import cv2,pickle,base64,time
+import cv2,pickle,base64,time,numpy as np
 from django.http import JsonResponse
 from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
@@ -257,7 +257,7 @@ def camera():
     imgBlur = cv2.GaussianBlur(imgGray, (3, 3), 1) 
     imgThreshold = cv2.adaptiveThreshold(imgBlur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 25, 16) 
     imgMedian = cv2.medianBlur(imgThreshold, 5)
-    kernel = [[1 for _ in range(3)] for _ in range(3)]
+    kernel = np.ones((3, 3), np.uint8)
     imgDilate = cv2.dilate(imgMedian, kernel, iterations=1) 
     with open('CarParkPos1', 'rb') as f:
         posList = pickle.load(f) 
