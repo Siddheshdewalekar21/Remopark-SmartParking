@@ -5,3 +5,4 @@ opencv-python-headless==4.9.0.80
 pytz==2023.3    
 gunicorn
 whitenoise
+pillow==10.3.0
