@@ -95,14 +95,26 @@
         }
 
         function startCapturing() {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
-                    const video = document.getElementById('video');
-                    video.srcObject = stream;
-                    video.play();
-                    intervalId = setInterval(captureImage, 15000); // Capture image every 5 minutes (300000 ms)
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                    const rearCamera = videoDevices.find(device => /rear/i.test(device.label));
+
+                    if (rearCamera) {
+                        const constraints = { video: { deviceId: rearCamera.deviceId } };
+                        navigator.mediaDevices.getUserMedia(constraints)
+                            .then(stream => {
+                                const video = document.getElementById('video');
+                                video.srcObject = stream;
+                                video.play();
+                                intervalId = setInterval(captureImage, 15000); // Capture image every 5 minutes (300000 ms)
+                            })
+                            .catch(error => console.error('Error accessing rear camera:', error));
+                    } else {
+                        console.error('No rear camera found');
+                    }
                 })
-                .catch(error => console.error('Error accessing webcam:', error));
+                .catch(error => console.error('Error enumerating devices:', error));
         }
 
         function stopCapturing() {
