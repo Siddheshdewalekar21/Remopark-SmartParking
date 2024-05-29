@@ -2,7 +2,7 @@
 psycopg2-binary~=2.9.3
 razorpay==1.4.1
 cvzone==1.5.3
-opencv-python==4.0.0.21
+opencv-python==4.9.0.80
 pytz==2023.3    
 gunicorn
 whitenoise
