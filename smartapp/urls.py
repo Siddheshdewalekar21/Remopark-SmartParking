@@ -22,5 +22,5 @@ urlpatterns = [
     path('capture_image/', views.capture_image, name='capture_image'),
     path('upload_image/', views.upload_image, name='upload_image'),
     path('display_image/', views.display_image, name='display_image'),
-    path('delete_past/', views.delete_past_bookings, name='display_image'),
+    path('delete_past/', views.delete_past_bookings, name='delete_past_bookings'),
 ]

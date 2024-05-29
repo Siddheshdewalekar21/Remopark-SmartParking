@@ -192,7 +192,7 @@ def delete_past_bookings(request):
     current_key = get_current_key()
     if current_key:
         BookedSpot.objects.filter(spot_code__lt=current_key).delete()
-
+    return JsonResponse({'message': 'Past Bookings Deleted'}, status=200)
 def deleteAll(request):
     if request.method == 'GET':
         utc_now = timezone.now()
