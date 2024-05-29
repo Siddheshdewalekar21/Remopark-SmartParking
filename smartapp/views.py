@@ -234,7 +234,7 @@ def user_logout(request):
     return redirect('login') 
 
 def contact(request):
-    return render(request,'contact.html')
+    return render(request,'contact.html',{'thank': 'Thank you for contacting us!'})
 def about(request):
     return render(request,'about.html')
 def services(request):

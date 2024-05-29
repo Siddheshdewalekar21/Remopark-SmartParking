@@ -1,9 +1,13 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} 
+{% block content %}
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             background-color: #f4f4f4;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
 
         header {
@@ -11,17 +15,17 @@
             color: #0d6efd;
             padding: 20px;
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         main {
             max-width: 600px;
             margin: 0 auto;
+            padding: 0 15px;
         }
 
         section {
-           
-            padding: 40px;
+            padding: 20px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -29,21 +33,28 @@
 
         .profile-info {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
             gap: 20px;
         }
 
         .info-item {
             display: flex;
             align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
         }
 
         .info-item i {
             margin-right: 10px;
+            color: #0d6efd;
         }
 
         .profile-actions {
-            margin-top: 30px;
+            margin-top: 20px;
             text-align: center;
         }
 
@@ -55,6 +66,7 @@
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            display: inline-block;
         }
 
         .button:hover {
@@ -65,8 +77,29 @@
             color: inherit;
             text-decoration: none;
         }
-        #shadow-host-companion{
+
+        .not-logged-in {
+            text-align: center;
+        }
+
+        .not-logged-in a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .not-logged-in a:hover {
+            color: #0b5ed7;
+        }
+
+        #shadow-host-companion {
             display: none;
+        }
+
+        @media (min-width: 600px) {
+            .profile-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
@@ -80,19 +113,19 @@
             <div class="profile-info">
                 <div class="info-item">
                     <i class="fas fa-user"></i>
-                    <b>Username</b> : {{user.username}}
+                    <b>Username</b>: {{ user.username }}
                 </div>
                 <div class="info-item">
                     <i class="fas fa-envelope"></i>
-                    <b>Email</b> : {{user.email}}
+                    <b>Email</b>: {{ user.email }}
                 </div>
                 <div class="info-item">
                     <i class="fas fa-phone"></i>
-                    <b>Phone</b> : {{user.phone}}
+                    <b>Phone</b>: {{ user.phone }}
                 </div>
                 <div class="info-item">
                     <i class="fas fa-car"></i>
-                    <b>Car No</b>: {{user.car_no}}
+                    <b>Car No</b>: {{ user.car_no }}
                 </div>
             </div>
             <div class="profile-actions">
@@ -101,12 +134,13 @@
                 </button>
             </div>
             {% else %}
-            <div><center>   You are Not Logged In <br></be><a href={% url 'login' %}>Login</a></center></div>
-             
+            <div class="not-logged-in">
+                <p>You are Not Logged In</p>
+                <a href="{% url 'login' %}">Login</a>
+            </div>
             {% endif %}
         </section>
     </main>
 </body>
 </html>
-
 {% endblock %}
