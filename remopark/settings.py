@@ -4,7 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-9ik9qr+$yfdjh4$5v^d=px$+u^8n7i0y$+x#c%6vd9p^t2-l+n'
-DEBUG = False  # Ensure DEBUG is False for production
+DEBUG = True  # Ensure DEBUG is False for production
 
 ALLOWED_HOSTS = ['192.168.0.15','127.0.0.1', '.vercel.app','remopark2-production.up.railway.app']
 CSRF_TRUSTED_ORIGINS = ['https://remopark2-production.up.railway.app']
