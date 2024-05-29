@@ -311,7 +311,7 @@ def checking(spot_names_to_exclude):
         if currentKey not in spot.spot_code:
             booked_spots = BookedSpot.objects.filter(parking_spot=spot, spot_code__contains=prevKey).values_list('user__email', flat=True)
             subject = 'Time Extended Please pay Bill'
-            message = rf'Dear {user.username},\n\nYour parking spot at {spot.parking_center.name} has been booked successfully.\n\nSpot Details:\nSpot Name: {spot.name}\Time : {booked_times}\n\nThank you for using our service!'
+            message = rf'Please pay remaining Bill at https://remopark2-production.up.railway.app/spot/{spot.spot_code}'
             from_email = settings.DEFAULT_FROM_EMAIL
             recipient_list = booked_spots
             send_mail(subject, message, from_email, recipient_list, fail_silently=False)
