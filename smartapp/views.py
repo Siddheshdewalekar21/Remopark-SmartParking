@@ -143,6 +143,7 @@ def map(request):
 
     return render(request, 'map.html', context)
 
+@csrf_exempt
 def success(request):
     booked_times=""
     parking_spot_id=request.session.get('parking_spot_id')
@@ -192,6 +193,7 @@ def delete_past_bookings(request):
     if current_key:
         BookedSpot.objects.filter(spot_code__lt=current_key).delete()
     return JsonResponse({'message': 'Past Bookings Deleted'}, status=200)
+
 def deleteAll(request):
     if request.method == 'GET':
         utc_now = timezone.now()
