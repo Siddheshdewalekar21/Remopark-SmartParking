@@ -1,34 +1,90 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+
+  <style>
+    html,
+    body {
+      position: relative;
+      height: 100%;
+    }
+
+    body {
+      background: #eee;
+      font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      color: #000;
+      margin: 0;
+      padding: 0;
+    }
+
+    swiper-container {
+      margin-top: 100px;
+      width: 100%;
+      height: auto;
+      margin: 0;
+      padding: 0;
+    }
+
+    swiper-slide {
+      text-align: center;
+      font-size: 18px;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    swiper-slide img {
+      display: block;
+      max-width: 400px;
+      height: auto;
+      max-height: 300px;
+    }
+    .done{
+      height: 300px;
+      width: 100%;
+    }
+  </style>
+</head>
 <div class="container">
+  <swiper-container class="mySwiper" pagination="true" pagination-dynamic-bullets="true">
+    <swiper-slide><img src="media/Slider1.png" alt="Slide 1" class="done"></swiper-slide>
+    <swiper-slide><img src="media/Slider2.png" alt="Slide 2"class="done"></swiper-slide>
+    <swiper-slide><img src="media/Slider3.png" alt="Slide 3" class="done"></swiper-slide>
+  </swiper-container>
+
   <hr>
   <hr>
-  {% if booked_spots %} 
-{% for booked_spot in booked_spots %} 
-<div class="card mt-5 mx-2"> 
-    <h5 class="card-header">Location: {{ booked_spot.parking_center.name }}</h5> 
-    <div class="card-body"> 
-        <h3 class="card-text">Slot: {{ booked_spot.parking_spot.name }}</h3> 
-        <p class="card-text"> 
-            {% for key, value in time_slots %} 
-            {% if key == booked_spot.spot_code %} 
-            {{ value }} 
-            {% endif %} 
-            {% endfor %} 
-        </p> 
-        <a class="btn btn-primary" href='destination?lng={{booked_spot.parking_center.longitude}}&lat={{booked_spot.parking_center.latitude}}'>View Directions</a>
-        {% if booked_spot.parking_center.id == 1 %}
-            <a class="btn btn-success" href="/display_image">Preview</a>
+  {% if booked_spots %}
+  {% for booked_spot in booked_spots %}
+  <div class="card mt-5 mx-2">
+    <h5 class="card-header">Location: {{ booked_spot.parking_center.name }}</h5>
+    <div class="card-body">
+      <h3 class="card-text">Slot: {{ booked_spot.parking_spot.name }}</h3>
+      <p class="card-text">
+        {% for key, value in time_slots %}
+        {% if key == booked_spot.spot_code %}
+        {{ value }}
         {% endif %}
-    </div> 
-</div> 
-{% endfor %} 
-{% else %} 
-<div class="alert alert-info mt-5" role="alert"> 
-    You have no slots booked. 
-</div> 
-{% endif %}
+        {% endfor %}
+      </p>
+      <a class="btn btn-primary"
+        href='destination?lng={{booked_spot.parking_center.longitude}}&lat={{booked_spot.parking_center.latitude}}'>View
+        Directions</a>
+      {% if booked_spot.parking_center.id == 1 %}
+      <a class="btn btn-success" href="/display_image">Preview</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="alert alert-info mt-5" role="alert">
+    You have no slots booked.
+  </div>
+  {% endif %}
   <center>
     <button type="button" class="btn btn-primary mt-5">
       <a href="/map" style="text-decoration: none; color: white">Book Spots Now</a>
@@ -36,6 +92,15 @@
   </center>
 </div>
 
-<script>
-</script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
 {% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+<body>
+
+</body>
+
+</html>

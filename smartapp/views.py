@@ -143,7 +143,6 @@ def map(request):
 
     return render(request, 'map.html', context)
 
-@csrf_exempt
 def success(request):
     booked_times=""
     parking_spot_id=request.session.get('parking_spot_id')
