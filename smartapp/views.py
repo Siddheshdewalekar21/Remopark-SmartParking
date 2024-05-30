@@ -168,6 +168,13 @@ def success(request):
     from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = [user.email]
     send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+    session_keys_to_delete = [
+        'parking_spot_id', 'parking_center_id', 'updatedSlots',
+        'selected_slots', 'selected_slots', 'spotname', 'center', 'price'
+    ]
+    for key in session_keys_to_delete:
+        if key in request.session:
+            del request.session[key]
     return render(request,'success.html')
 
 @login_required(login_url='login')
@@ -309,7 +316,7 @@ def checking(spot_names_to_exclude):
         if currentKey not in spot.spot_code:
             booked_spots = BookedSpot.objects.filter(parking_spot=spot, spot_code__contains=prevKey).values_list('user__email', flat=True)
             subject = 'Time Extended Please pay Bill'
-            message = rf'Please pay remaining Bill at https://remopark2-production.up.railway.app/spot/{spot.spot_code}'
+            message = rf'Please pay remaining Bill at https://remopark2-production.up.railway.app/spot/{spot.spot_code}?selected_slots=h'
             from_email = settings.DEFAULT_FROM_EMAIL
             recipient_list = booked_spots
             send_mail(subject, message, from_email, recipient_list, fail_silently=False)
