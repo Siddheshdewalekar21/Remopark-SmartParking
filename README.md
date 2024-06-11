@@ -1,1 +1,1 @@
-# remopark2
+An web application for Remote Parking Management and Automation
