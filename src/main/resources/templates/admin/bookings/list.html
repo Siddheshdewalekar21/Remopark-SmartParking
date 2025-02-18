@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Bookings - Remopark Admin</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="/admin"><i class="fas fa-cogs"></i> Admin Panel</a>
+        <a href="/admin/bookings" class="active"><i class="fas fa-ticket-alt"></i> Bookings</a>
+    </div>
+
+    <div class="container">
+        <div class="admin-panel">
+            <div class="panel-header">
+                <h1><i class="fas fa-ticket-alt"></i> Manage Bookings</h1>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <form th:action="@{/admin/bookings}" method="get" class="search-form">
+                    <div class="search-group">
+                        <input type="text" name="search" th:value="${search}" 
+                               class="form-control" placeholder="Search bookings...">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Bookings Table -->
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a th:href="@{'/admin/bookings?sortBy=id&sortDir=' + ${reverseSortDir}}">
+                                    ID <i class="fas" th:classappend="${sortBy == 'id'} ? ${sortDir == 'asc' ? 'fa-sort-up' : 'fa-sort-down'} : 'fa-sort'"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/bookings?sortBy=userName&sortDir=' + ${reverseSortDir}}">
+                                    User <i class="fas" th:classappend="${sortBy == 'userName'} ? ${sortDir == 'asc' ? 'fa-sort-up' : 'fa-sort-down'} : 'fa-sort'"></i>
+                                </a>
+                            </th>
+                            <th>Contact</th>
+                            <th>
+                                <a th:href="@{'/admin/bookings?sortBy=spotCode&sortDir=' + ${reverseSortDir}}">
+                                    Spot <i class="fas" th:classappend="${sortBy == 'spotCode'} ? ${sortDir == 'asc' ? 'fa-sort-up' : 'fa-sort-down'} : 'fa-sort'"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/bookings?sortBy=startTime&sortDir=' + ${reverseSortDir}}">
+                                    Start Time <i class="fas" th:classappend="${sortBy == 'startTime'} ? ${sortDir == 'asc' ? 'fa-sort-up' : 'fa-sort-down'} : 'fa-sort'"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{'/admin/bookings?sortBy=endTime&sortDir=' + ${reverseSortDir}}">
+                                    End Time <i class="fas" th:classappend="${sortBy == 'endTime'} ? ${sortDir == 'asc' ? 'fa-sort-up' : 'fa-sort-down'} : 'fa-sort'"></i>
+                                </a>
+                            </th>
+                            <th>Status</th>
+                            <th>
+                                <a th:href="@{'/admin/bookings?sortBy=price&sortDir=' + ${reverseSortDir}}">
+                                    Price <i class="fas" th:classappend="${sortBy == 'price'} ? ${sortDir == 'asc' ? 'fa-sort-up' : 'fa-sort-down'} : 'fa-sort'"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="booking : ${bookings}">
+                            <td th:text="${booking.id}">1</td>
+                            <td th:text="${booking.userName}">John Doe</td>
+                            <td>
+                                <div th:text="${booking.userEmail}">john@example.com</div>
+                                <div th:text="${booking.userPhone}">1234567890</div>
+                            </td>
+                            <td>
+                                <div th:text="${booking.spotCode}">A1</div>
+                                <div class="text-muted" th:text="${booking.centerName}">Central Parking</div>
+                            </td>
+                            <td th:text="${#temporals.format(booking.startTime, 'dd-MM-yyyy HH:mm')}">01-01-2024 10:00</td>
+                            <td th:text="${#temporals.format(booking.endTime, 'dd-MM-yyyy HH:mm')}">01-01-2024 11:00</td>
+                            <td><span class="status-badge" th:text="${booking.status}">BOOKED</span></td>
+                            <td th:text="${'$' + booking.price}">$10.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" th:if="${totalPages > 1}">
+                <a th:href="@{/admin/bookings(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, sortDir=${sortDir}, search=${search})}" 
+                   th:class="${currentPage == 0} ? 'disabled' : ''">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                <span th:text="${currentPage + 1}">1</span> / <span th:text="${totalPages}">5</span>
+                <a th:href="@{/admin/bookings(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, sortDir=${sortDir}, search=${search})}" 
+                   th:class="${currentPage + 1 >= totalPages} ? 'disabled' : ''">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

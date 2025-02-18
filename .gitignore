@@ -1,0 +1,6 @@
+# Ignore application properties with sensitive data 
+src/main/resources/application.properties 
+src/main/resources/application-prod.properties 
+target/ 
+.idea/ 
+*.log 

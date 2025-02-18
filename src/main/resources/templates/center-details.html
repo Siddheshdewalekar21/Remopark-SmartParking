@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Parking Center Details - Remopark</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/map">Map</a>
+        <a href="/bookings">My Bookings</a>
+    </div>
+
+    <div class="container">
+        <div th:if="${error}" class="alert alert-error">
+            <p th:text="${error}">Error message</p>
+        </div>
+        
+        <div th:if="${message}" class="alert alert-success">
+            <p th:text="${message}">Success message</p>
+        </div>
+        
+        <div th:if="${center}" class="card">
+            <h2 th:text="${center.name}">Center Name</h2>
+            
+            <div class="center-info">
+                <p>Price: ₹<span th:text="${center.price}">Price</span>/hour</p>
+                <p>Contact: <span th:text="${center.contact}">Contact</span></p>
+                <p>Location: <span th:text="${center.latitude}">Lat</span>, 
+                   <span th:text="${center.longitude}">Long</span></p>
+            </div>
+
+            <div class="booking-section">
+                <h3>Book a Spot</h3>
+                <form th:action="@{/bookings/create}" method="post">
+                    <input type="hidden" name="centerId" th:value="${center.id}" />
+                    
+                    <div class="form-group">
+                        <label for="date">Select Date:</label>
+                        <input type="date" id="date" name="date" class="form-control" 
+                               th:min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required />
+                    </div>
+
+                    <div class="time-slots">
+                        <!-- Time slots will be populated by JavaScript -->
+                    </div>
+
+                    <input type="hidden" id="selectedTime" name="time" required />
+                    <input type="hidden" id="selectedSpot" name="spotCode" required />
+                    <input type="hidden" id="duration" name="duration" value="1" />
+                    
+                    <button type="submit" class="btn btn-primary" disabled id="bookButton">Book Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const timeSlotsContainer = document.querySelector('.time-slots');
+            const dateInput = document.getElementById('date');
+            const selectedTimeInput = document.getElementById('selectedTime');
+            const selectedSpotInput = document.getElementById('selectedSpot');
+            const bookButton = document.getElementById('bookButton');
+            
+            // Get booked spots from Thymeleaf model
+            const bookedSpots = /*[[${bookedSpots}]]*/ [];
+
+            function isSpotBooked(date, time, spotCode) {
+                return bookedSpots.some(booking => 
+                    booking.date === date && 
+                    booking.time === time && 
+                    booking.spotCode === spotCode &&
+                    booking.status === 'CONFIRMED'  // Only consider confirmed bookings
+                );
+            }
+
+            function getAvailableSpotsForTime(date, time) {
+                const spots = [];
+                for(let spotNum = 1; spotNum <= 6; spotNum++) {
+                    const spotCode = `A${spotNum}`;
+                    if (!isSpotBooked(date, time, spotCode)) {
+                        spots.push(spotCode);
+                    }
+                }
+                return spots;
+            }
+
+            function generateTimeSlots() {
+                timeSlotsContainer.innerHTML = '';
+                const selectedDate = dateInput.value;
+                
+                // Generate slots from 6 AM to 10 PM
+                for(let hour = 6; hour <= 22; hour++) {
+                    const timeString = `${hour.toString().padStart(2, '0')}:00`;
+                    
+                    // Get available spots for this time
+                    const availableSpots = getAvailableSpotsForTime(selectedDate, timeString);
+                    
+                    // Skip this time block if no spots are available
+                    if (availableSpots.length === 0) {
+                        continue;
+                    }
+                    
+                    const timeBlock = document.createElement('div');
+                    timeBlock.className = 'time-block';
+                    
+                    const timeHeader = document.createElement('div');
+                    timeHeader.className = 'time-header';
+                    timeHeader.textContent = `${timeString} (${availableSpots.length} spots available)`;
+                    
+                    const spotsGrid = document.createElement('div');
+                    spotsGrid.className = 'spots-grid';
+                    
+                    // Create elements only for available spots
+                    availableSpots.forEach(spotCode => {
+                        const spot = document.createElement('div');
+                        spot.className = 'parking-spot available';
+                        spot.textContent = spotCode;
+                        
+                        spot.addEventListener('click', function() {
+                            document.querySelectorAll('.parking-spot').forEach(s => {
+                                s.classList.remove('selected');
+                            });
+                            
+                            spot.classList.add('selected');
+                            selectedTimeInput.value = timeString;
+                            selectedSpotInput.value = spotCode;
+                            bookButton.disabled = false;
+                        });
+                        
+                        spotsGrid.appendChild(spot);
+                    });
+                    
+                    timeBlock.appendChild(timeHeader);
+                    timeBlock.appendChild(spotsGrid);
+                    timeSlotsContainer.appendChild(timeBlock);
+                }
+
+                // If no time blocks were added, show a message
+                if (timeSlotsContainer.children.length === 0) {
+                    const noSpotsMessage = document.createElement('div');
+                    noSpotsMessage.className = 'alert alert-info';
+                    noSpotsMessage.textContent = 'No parking spots available for this date.';
+                    timeSlotsContainer.appendChild(noSpotsMessage);
+                }
+            }
+
+            dateInput.addEventListener('change', generateTimeSlots);
+            generateTimeSlots(); // Initial generation
+        });
+    </script>
+</body>
+</html> 

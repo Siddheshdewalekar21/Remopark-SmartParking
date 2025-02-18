@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{base}">
+<head>
+    <title>Home - RemoPark</title>
+    <style>
+        .swiper-container {
+            margin-top: 100px;
+            width: 100%;
+            height: auto;
+        }
+        .swiper-slide img {
+            max-width: 400px;
+            height: auto;
+            max-height: 300px;
+        }
+        .card {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container">
+            <swiper-container class="mySwiper" pagination="true" effect="coverflow" grab-cursor="true" 
+                centered-slides="true" slides-per-view="auto" coverflow-effect-rotate="50" 
+                coverflow-effect-stretch="0" coverflow-effect-depth="100" 
+                coverflow-effect-modifier="1" coverflow-effect-slide-shadows="true">
+                <swiper-slide>
+                    <img src="/images/parking1.jpg" />
+                </swiper-slide>
+                <!-- Add more slides as needed -->
+            </swiper-container>
+
+            <hr>
+            
+            <div th:if="${bookedSpots}">
+                <div th:each="bookedSpot : ${bookedSpots}" class="card mt-5 mx-2">
+                    <h5 class="card-header" th:text="'Location: ' + ${bookedSpot.parkingCenter.name}"></h5>
+                    <div class="card-body">
+                        <h3 class="card-text" th:text="'Slot: ' + ${bookedSpot.parkingSpot.name}"></h3>
+                        <p class="card-text" th:text="${bookedSpot.timeSlot}"></p>
+                        <a class="btn btn-primary" 
+                           th:href="@{/destination(lng=${bookedSpot.parkingCenter.longitude},lat=${bookedSpot.parkingCenter.latitude})}">
+                            View Directions
+                        </a>
+                        <a th:if="${bookedSpot.parkingCenter.id == 1}" class="btn btn-success" href="/display_image">
+                            Preview
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:unless="${bookedSpots}" class="alert alert-info mt-5">
+                You have no slots booked.
+            </div>
+
+            <center>
+                <a href="/map" class="btn btn-primary mt-5">Book Spots Now</a>
+            </center>
+        </div>
+    </div>
+</body>
+</html> 

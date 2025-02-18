@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Parking Centers - Remopark Admin</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="/admin"><i class="fas fa-cogs"></i> Admin Panel</a>
+        <a href="/admin/centers" class="active"><i class="fas fa-parking"></i> Parking Centers</a>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <div class="admin-panel">
+            <div class="panel-header">
+                <h1><i class="fas fa-parking"></i> Manage Parking Centers</h1>
+                <a href="/admin/centers/new" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Add New Center
+                </a>
+            </div>
+
+            <!-- Alert Messages -->
+            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <!-- Centers Table -->
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Price/Hour</th>
+                            <th>Location</th>
+                            <th>Contact</th>
+                            <th>Spots</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="center : ${centers}">
+                            <td th:text="${center.id}">1</td>
+                            <td th:text="${center.name}">Central Parking</td>
+                            <td th:text="${'$' + center.price}">$10.00</td>
+                            <td>
+                                <span th:text="${center.latitude}">18.5204</span>,
+                                <span th:text="${center.longitude}">73.8567</span>
+                            </td>
+                            <td th:text="${center.contact}">123-456-7890</td>
+                            <td>
+                                <a th:href="@{/admin/centers/{id}/spots(id=${center.id})}" 
+                                   class="btn btn-sm btn-info">
+                                    Manage Spots
+                                </a>
+                            </td>
+                            <td class="actions">
+                                <a th:href="@{/admin/centers/{id}/edit(id=${center.id})}" 
+                                   class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger" 
+                                        th:onclick="'deleteCenter(' + ${center.id} + ')'">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Delete</h2>
+            <p>Are you sure you want to delete this parking center?</p>
+            <div class="modal-actions">
+                <button onclick="confirmDelete()" class="btn btn-danger">Delete</button>
+                <button onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let centerIdToDelete = null;
+        const modal = document.getElementById('deleteModal');
+
+        function deleteCenter(centerId) {
+            centerIdToDelete = centerId;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function confirmDelete() {
+            if (centerIdToDelete) {
+                fetch(`/admin/centers/${centerIdToDelete}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error deleting parking center');
+                    }
+                });
+            }
+            closeModal();
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html> 

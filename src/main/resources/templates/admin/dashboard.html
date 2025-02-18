@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard - Remopark</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .nav-bar {
+            background-color: #333;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        .nav-bar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background-color: #f5f5f5;
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/admin">Dashboard</a>
+        <a href="/admin/users">Manage Users</a>
+        <a href="/admin/centers">Manage Centers</a>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger">Sign Out</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <div th:if="${username}" class="welcome-message">
+            <p>Welcome, <span th:text="${username}">Admin</span>!</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <p class="stat-number" th:text="${userCount ?: '0'}">0</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Parking Centers</h3>
+                <p class="stat-number" th:text="${centerCount ?: '0'}">0</p>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h2>Quick Actions</h2>
+            <div class="button-grid">
+                <a href="/admin/users" class="btn btn-primary">Manage Users</a>
+                <a href="/admin/centers" class="btn btn-primary">Manage Centers</a>
+                <a href="/admin/centers/new" class="btn btn-success">Add New Center</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

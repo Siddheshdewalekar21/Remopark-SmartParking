@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Bookings - Remopark</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/map">Map</a>
+        <a href="/bookings">My Bookings</a>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1>My Bookings</h1>
+            
+            <div th:if="${bookings.empty}" class="alert alert-info">
+                <p>You have no bookings yet.</p>
+            </div>
+            
+            <div th:if="${!bookings.empty}" class="bookings-grid">
+                <div th:each="booking : ${bookings}" class="booking-card">
+                    <div class="booking-header">
+                        <h3 th:text="${booking.parkingCenter.name}">Center Name</h3>
+                        <span class="spot-code" th:text="${'Spot: ' + booking.spotCode}">A1</span>
+                    </div>
+                    <div class="booking-details">
+                        <p>
+                            <i class="far fa-calendar"></i>
+                            <span th:text="${#temporals.format(booking.startTime, 'dd-MM-yyyy')}">Date</span>
+                        </p>
+                        <p>
+                            <i class="far fa-clock"></i>
+                            <span th:text="${#temporals.format(booking.startTime, 'HH:mm')}">Time</span>
+                            <span> - </span>
+                            <span th:text="${#temporals.format(booking.endTime, 'HH:mm')}">End Time</span>
+                        </p>
+                        <p>
+                            <i class="fas fa-hourglass-half"></i>
+                            <span th:text="${booking.duration + ' hours'}">Duration</span>
+                        </p>
+                        <div class="status-badge" th:classappend="${'status-' + booking.status.toLowerCase()}"
+                             th:text="${booking.status}">Status</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a href="/map" class="btn btn-primary">Book New Spot</a>
+                <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

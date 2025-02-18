@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard - Remopark</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="/bookings"><i class="fas fa-ticket-alt"></i> My Bookings</a>
+        <a href="/map"><i class="fas fa-map-marked-alt"></i> Find Parking</a>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Welcome, <span th:text="${user.fullName}">User</span>!</h1>
+            <a href="/map" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Book New Spot
+            </a>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-ticket-alt"></i>
+                <h3>Active Bookings</h3>
+                <p class="stat-number" th:text="${activeBookings}">0</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-history"></i>
+                <h3>Total Bookings</h3>
+                <p class="stat-number" th:text="${totalBookings}">0</p>
+            </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="recent-bookings">
+            <h2>Recent Bookings</h2>
+            <div class="bookings-grid" th:if="${!recentBookings.empty}">
+                <div th:each="booking : ${recentBookings}" class="booking-card">
+                    <div class="booking-header">
+                        <h3 th:text="${booking.parkingCenter.name}">Center Name</h3>
+                        <span class="spot-badge" th:text="${'Spot ' + booking.spotCode}">A1</span>
+                    </div>
+                    <div class="booking-details">
+                        <p>
+                            <i class="far fa-calendar"></i>
+                            <span th:text="${#temporals.format(booking.startTime, 'dd MMM yyyy')}">Date</span>
+                        </p>
+                        <p>
+                            <i class="far fa-clock"></i>
+                            <span th:text="${#temporals.format(booking.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(booking.endTime, 'HH:mm')}">Time</span>
+                        </p>
+                        <p>
+                            <i class="fas fa-dollar-sign"></i>
+                            <span th:text="${booking.price}">Price</span>
+                        </p>
+                    </div>
+                    <div class="booking-status" th:text="${booking.status}">Status</div>
+                </div>
+            </div>
+            <div class="no-bookings" th:if="${recentBookings.empty}">
+                <p>You haven't made any bookings yet.</p>
+                <a href="/map" class="btn btn-primary">Book Your First Spot</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

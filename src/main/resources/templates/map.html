@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Map - Remopark</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/bookings">My Bookings</a>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger">Sign Out</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <div class="welcome-banner card">
+            <h1>Welcome, <span th:text="${username}">User</span>!</h1>
+            <p>Find and book your perfect parking spot</p>
+        </div>
+        
+        <div class="parking-centers">
+            <div th:each="center : ${parkingCenters}" class="card">
+                <div class="center-header">
+                    <h3 th:text="${center.name}">Parking Center Name</h3>
+                    <span class="price" th:text="'₹' + ${center.price} + '/hour'">Price</span>
+                </div>
+                
+                <div class="center-details">
+                    <p><strong>Contact:</strong> <span th:text="${center.contact}">Contact</span></p>
+                    <p><strong>Location:</strong> 
+                        <span th:text="${center.latitude} + ', ' + ${center.longitude}">Location</span>
+                    </p>
+                </div>
+                
+                <div class="center-actions">
+                    <a th:href="@{/centers/{id}(id=${center.id})}" 
+                       class="btn btn-primary">View & Book</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

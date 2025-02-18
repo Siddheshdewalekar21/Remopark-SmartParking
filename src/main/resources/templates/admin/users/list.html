@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Manage Users - Remopark Admin</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="/admin"><i class="fas fa-cogs"></i> Admin Panel</a>
+        <a href="/admin/users" class="active"><i class="fas fa-users"></i> Users</a>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <div class="admin-panel">
+            <div class="panel-header">
+                <h1><i class="fas fa-users"></i> Manage Users</h1>
+            </div>
+
+            <!-- Alert Messages -->
+            <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <form th:action="@{/admin/users}" method="get" class="search-form">
+                    <div class="search-group">
+                        <input type="text" name="search" th:value="${search}" 
+                               class="form-control" placeholder="Search users...">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Users Table -->
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Car Number</th>
+                            <th>Roles</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.id}">1</td>
+                            <td th:text="${user.username}">johndoe</td>
+                            <td th:text="${user.fullName}">John Doe</td>
+                            <td th:text="${user.email}">john@example.com</td>
+                            <td th:text="${user.phone}">1234567890</td>
+                            <td th:text="${user.carNumber}">ABC123</td>
+                            <td>
+                                <span th:each="role : ${user.roles}" 
+                                      th:text="${role.name}"
+                                      class="role-badge">
+                                    ROLE_USER
+                                </span>
+                            </td>
+                            <td class="actions">
+                                <a th:href="@{/admin/users/{id}/edit(id=${user.id})}" 
+                                   class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger" 
+                                        th:onclick="'deleteUser(' + ${user.id} + ')'">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" th:if="${totalPages > 1}">
+                <a th:href="@{/admin/users(page=${currentPage - 1}, search=${search})}" 
+                   th:class="${currentPage == 0} ? 'disabled' : ''">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                <span th:text="${currentPage + 1}">1</span> / <span th:text="${totalPages}">5</span>
+                <a th:href="@{/admin/users(page=${currentPage + 1}, search=${search})}" 
+                   th:class="${currentPage + 1 >= totalPages} ? 'disabled' : ''">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Delete</h2>
+            <p>Are you sure you want to delete this user?</p>
+            <div class="modal-actions">
+                <button onclick="confirmDelete()" class="btn btn-danger">Delete</button>
+                <button onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let userIdToDelete = null;
+        const modal = document.getElementById('deleteModal');
+
+        function deleteUser(userId) {
+            userIdToDelete = userId;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function confirmDelete() {
+            if (userIdToDelete) {
+                fetch(`/admin/users/${userIdToDelete}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error deleting user');
+                    }
+                });
+            }
+            closeModal();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html> 

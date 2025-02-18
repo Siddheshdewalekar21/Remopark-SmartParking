@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Parking Centers Management - Remopark</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .nav-bar {
+            background-color: #333;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        .nav-bar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .centers-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .centers-table th, .centers-table td {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .centers-table th {
+            background-color: #f5f5f5;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.25rem;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-warning { background-color: #ffc107; color: black; }
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+        .alert-success { background-color: #d4edda; color: #155724; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; }
+        .actions-bar {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/admin">Dashboard</a>
+        <a href="/admin/users">Manage Users</a>
+        <a href="/admin/centers">Manage Centers</a>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger">Sign Out</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h1>Parking Centers Management</h1>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <!-- Actions Bar -->
+        <div class="actions-bar">
+            <a href="/admin/centers/new" class="btn btn-primary">Add New Center</a>
+        </div>
+
+        <!-- Centers Table -->
+        <table class="centers-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Price/Hour</th>
+                    <th>Contact</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="center : ${centers}">
+                    <td th:text="${center.id}">1</td>
+                    <td th:text="${center.name}">Central Parking</td>
+                    <td th:text="${center.latitude + ', ' + center.longitude}">18.5204, 73.8567</td>
+                    <td th:text="${'₹' + center.price}">₹50</td>
+                    <td th:text="${center.contact}">123-456-7890</td>
+                    <td>
+                        <a th:href="@{/admin/centers/{id}/edit(id=${center.id})}" class="btn btn-warning">Edit</a>
+                        <a th:href="@{/admin/centers/{id}/spots(id=${center.id})}" class="btn btn-primary">Manage Spots</a>
+                        <button th:onclick="'deleteCenter(' + ${center.id} + ')'" class="btn btn-danger">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function deleteCenter(centerId) {
+            if (confirm('Are you sure you want to delete this parking center?')) {
+                fetch(`/admin/centers/${centerId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting parking center');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting parking center');
+                });
+            }
+        }
+    </script>
+</body>
+</html> 

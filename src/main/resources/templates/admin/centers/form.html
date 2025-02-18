@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${center.id == null ? 'Add New' : 'Edit'} + ' Parking Center - Remopark Admin'">Add/Edit Center</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="/admin"><i class="fas fa-cogs"></i> Admin Panel</a>
+        <a href="/admin/centers"><i class="fas fa-parking"></i> Parking Centers</a>
+    </div>
+
+    <div class="container">
+        <div class="admin-panel">
+            <div class="panel-header">
+                <h1>
+                    <i class="fas fa-parking"></i>
+                    <span th:text="${center.id == null ? 'Add New' : 'Edit'} + ' Parking Center'">Add/Edit Center</span>
+                </h1>
+            </div>
+
+            <form th:action="@{${center.id == null ? '/admin/centers' : '/admin/centers/' + center.id}}"
+                  th:object="${center}"
+                  method="post"
+                  class="admin-form">
+
+                <div class="form-group">
+                    <label for="name">Center Name</label>
+                    <input type="text" id="name" th:field="*{name}" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Price per Hour ($)</label>
+                    <input type="number" id="price" th:field="*{price}" class="form-control" required step="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label for="latitude">Latitude</label>
+                    <input type="number" id="latitude" th:field="*{latitude}" class="form-control" required step="0.000001">
+                </div>
+
+                <div class="form-group">
+                    <label for="longitude">Longitude</label>
+                    <input type="number" id="longitude" th:field="*{longitude}" class="form-control" required step="0.000001">
+                </div>
+
+                <div class="form-group">
+                    <label for="contact">Contact Number</label>
+                    <input type="text" id="contact" th:field="*{contact}" class="form-control" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="/admin/centers" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Control Panel - Remopark</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="/admin" class="active"><i class="fas fa-cogs"></i> Admin Panel</a>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <div class="admin-panel">
+            <h1><i class="fas fa-cogs"></i> Admin Control Panel</h1>
+            
+            <!-- Overview Section -->
+            <div class="admin-section">
+                <h2><i class="fas fa-chart-bar"></i> System Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Total Users</h3>
+                        <p class="stat-number" th:text="${userCount}">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-parking"></i>
+                        <h3>Parking Centers</h3>
+                        <p class="stat-number" th:text="${centerCount}">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-ticket-alt"></i>
+                        <h3>Active Bookings</h3>
+                        <p class="stat-number" th:text="${activeBookings}">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div class="admin-section">
+                <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+                <div class="admin-actions-grid">
+                    <div class="action-card">
+                        <h3><i class="fas fa-users-cog"></i> User Management</h3>
+                        <div class="action-buttons">
+                            <a href="/admin/users" class="btn btn-primary">View Users</a>
+                            <a href="/admin/users/new" class="btn btn-success">Add User</a>
+                        </div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <h3><i class="fas fa-parking"></i> Parking Centers</h3>
+                        <div class="action-buttons">
+                            <a href="/admin/centers" class="btn btn-primary">View Centers</a>
+                            <a href="/admin/centers/new" class="btn btn-success">Add Center</a>
+                        </div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <h3><i class="fas fa-bookmark"></i> Bookings</h3>
+                        <div class="action-buttons">
+                            <a href="/admin/bookings" class="btn btn-primary">View Bookings</a>
+                            <a href="/admin/bookings/reports" class="btn btn-info">Generate Report</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Section -->
+            <div class="admin-section">
+                <h2><i class="fas fa-history"></i> Recent Activity</h2>
+                <div class="activity-list">
+                    <div th:each="activity : ${recentActivities}" class="activity-item">
+                        <span class="activity-icon" th:class="${activity.type}">
+                            <i th:class="${activity.icon}"></i>
+                        </span>
+                        <div class="activity-details">
+                            <p th:text="${activity.description}">Activity description</p>
+                            <small th:text="${activity.timestamp}">Timestamp</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
