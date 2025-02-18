@@ -1,0 +1,20 @@
+# Production Database Configuration
+spring.datasource.url=jdbc:mysql://your-production-host:3306/your_database
+spring.datasource.username=prod_username
+spring.datasource.password=prod_password
+
+# Production JPA/Hibernate Properties
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+# Production Server Configuration
+server.port=${PORT:8080}
+
+# Production Security Configuration
+spring.security.user.name=${ADMIN_USERNAME}
+spring.security.user.password=${ADMIN_PASSWORD}
+
+# Production Logging Configuration
+logging.level.root=WARN
+logging.level.com.remopark=INFO 
